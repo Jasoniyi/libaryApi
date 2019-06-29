@@ -18,6 +18,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/signup', User.create);
+app.post('/signin', User.login);
 
 app.listen(port, () => {
   console.log(`Libary API running on port ${port}`);
