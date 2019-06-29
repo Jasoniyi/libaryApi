@@ -56,6 +56,42 @@ const User = {
         error
       });
     }
+  },
+
+  /**
+   * Login
+   * @param {object} req
+   * @param { object} res
+   * @returns {object} user object
+   */
+  async login(req, res) {
+    if (!req.body.email || !req.body.password) {
+      return res.status(400).json({
+        status: 400,
+        message: 'Email or password missing'
+      });
+    }
+    if (!Helper.isValid(req.body.email)) {
+      return res.status(400).json({
+        status: 400,
+        message: 'Invalid email'
+      });
+    }
+    const text = 'SELECT * FROM users WHERE email = $1';
+
+    try {
+      const { rows } = await db.query(text, [req.body.email]);
+      if (!rows[0]) {
+        return res.status(400).send({ message: 'Incorrect credentials' });
+      }
+      if (!Helper.comparePassword(rows[0].password, req.body.password)) {
+        return res.status(400).send({ message: 'Incorrect password' });
+      }
+      const token = Helper.generateToken(rows[0].id);
+      return res.status(200).send({ token });
+    } catch (error) {
+      return res.status(400).send(error);
+    }
   }
 };
 
