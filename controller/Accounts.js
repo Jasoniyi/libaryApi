@@ -28,6 +28,30 @@ const Account = {
     } catch (error) {
       return res.status(400).send(error);
     }
+  },
+  /**
+   * delete account
+   * @params {object} req
+   * @params {object} res
+   * @returns {object} status code 204
+   */
+  async delete(req, res) {
+    const deleteQuery =      'DELETE FROM accounts WHERE id =$1 AND owner_id = $2 returning *';
+    try {
+      const { rows } = await db.query(deleteQuery, [
+        req.params.id,
+        req.user.id
+      ]);
+      if (!rows[0]) {
+        return res.status(404).send({ message: 'Account not found' });
+      }
+      return res.status(204).json({
+        status: 204,
+        message: `${req.user.username} deleted`
+      });
+    } catch (error) {
+      return res.status(400).send(error);
+    }
   }
 };
 
