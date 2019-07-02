@@ -2,6 +2,7 @@ import moment from 'moment';
 import uuidv4 from 'uuid/v4';
 import db from '../db/index';
 import Helper from './Helper';
+import '@babel/polyfill';
 
 const User = {
   /**
@@ -39,10 +40,12 @@ const User = {
     try {
       const { rows } = await db.query(createQuery, values);
       const token = Helper.generateToken(rows[0].id);
-      console.log(token);
+      // console.log(token);
       return res.status(201).json({
         status: 201,
-        token
+        data: {
+          token
+        }
       });
     } catch (error) {
       if (error.routine === '_bt_check_unique') {
