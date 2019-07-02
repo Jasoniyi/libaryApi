@@ -2,9 +2,11 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import User from './controller/Users';
+import Account from './controller/Accounts';
+import Auth from './middleware/Auth';
 
 dotenv.config();
-// const libary = process.env.TYPE === 'db' ?
+const libary = process.env.TYPE === 'db' ? Account : null;
 
 const app = express();
 
@@ -17,9 +19,12 @@ app.get('/', (req, res) => {
   res.status(200).send({ message: 'Welcome to libary API' });
 });
 
-app.post('/signup', User.create);
-app.post('/signin', User.login);
+app.post('/api/v1/signup', User.create);
+app.post('/api/v1/signin', User.login);
+app.post('/api/v1/account', Auth.verifyToken, libary.create);
 
 app.listen(port, () => {
   console.log(`Libary API running on port ${port}`);
 });
+
+export default app;
