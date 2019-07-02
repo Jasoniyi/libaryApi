@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment, { updateLocale } from 'moment';
 import uuidv4 from 'uuid/v4';
 import random from 'random-int';
 import db from '../db/index';
@@ -49,6 +49,31 @@ const Account = {
         status: 204,
         message: `${req.user.username} deleted`
       });
+    } catch (error) {
+      return res.status(400).send(error);
+    }
+  },
+  /**
+   * update account status
+   * @params {object} req
+   * @params {object} res
+   * @returns {object} updated object
+   */
+  async update(req, res) {
+    const findOneQuery = 'SELECT * FROM accounts WHERE id=$1 AND owner_id=$2';
+    const updateQuery =      'UPDATE accounts SET status=$1 WHERE id=$2 AND owner_id=$3 returning *';
+    try {
+      const { rows } = db.query(findOneQuery, [req.params.id, req.user.id]);
+      if (!rows[0]) {
+        return res.status(404).send({ message: 'Account not found' });
+      }
+      const values = [
+        req.body.status || rows[0].status,
+        req.params.id,
+        req.user.id
+      ];
+      const responce = await db.query(updateQuery, values);
+      return res.status(200).send(responce.rows[0]);
     } catch (error) {
       return res.status(400).send(error);
     }
