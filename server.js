@@ -23,6 +23,7 @@ app.post('/api/v1/signup', User.create);
 app.post('/api/v1/signin', User.login);
 app.post('/api/v1/account', Auth.verifyToken, libary.create);
 app.delete('/api/v1/accounts/:id', Auth.verifyToken, libary.delete);
+app.patch('/api/v1/accounts/:id', Auth.verifyToken, libary.update);
 
 app.listen(port, () => {
   console.log(`Libary API running on port ${port}`);
