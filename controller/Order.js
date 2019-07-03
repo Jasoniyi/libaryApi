@@ -27,6 +27,30 @@ const Order = {
       return res.status(400).send(err);
     }
   }
+  /** return book
+   *@params {object} req
+   *@params {object} res
+    *@returns {object} book object
+   */
+  async return(req,res) {
+    const returnQuery = `INSERT INTO orders(order_id, order_on, type, book, due_date, owner_id)
+    VALUES ($1, $2, $3, $4, $5, $6) returning *`;
+    const values = [
+      uuidv4(),
+      moment().format(),
+      req.body.type,
+      req.body.book,
+      req.body.due_date,
+      req.user.id
+    ];
+
+    try {
+      const { rows } = await db.query(returnQuery, values);
+      return res.status(200).send(rows[0]);
+    } catch(err) {
+      return res.status(400).send(err)
+    }
+  }
 };
 
 export default Order;
