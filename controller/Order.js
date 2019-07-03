@@ -65,6 +65,21 @@ const Order = {
     } catch (err) {
       return res.status(400).send(err);
     }
+  },
+  /**
+   * get all records
+   * @params {object} req
+   * @params {object} res
+   * @returns {object} record object
+   */
+  async getRecord(req, res) {
+    const findRecord = 'SELECT * FROM accounts WHERE owner_id =$1';
+    try {
+      const { rows, rowCount } = await db.query(findRecord, [req.user.id]);
+      return res.status(200).send({ rows, rowCount });
+    } catch (err) {
+      return res.status(400).send(err);
+    }
   }
 };
 

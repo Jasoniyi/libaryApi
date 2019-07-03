@@ -28,6 +28,7 @@ app.patch('/api/v1/accounts/:id', Auth.verifyToken, libary.update);
 app.post('/api/v1/order', Auth.verifyToken, Order.borrow);
 app.post('/api/v1/return', Auth.verifyToken, Order.return);
 app.get('/api/v1/orders', Auth.verifyToken, Order.getAll);
+app.get('/api/v1/records', Auth.verifyToken, Order.getRecord);
 
 app.listen(port, () => {
   console.log(`Libary API running on port ${port}`);
